@@ -1,0 +1,15 @@
+{
+  "name": "counter-demo",
+  "startAddress": 0,
+  "entryPoint": 0,
+  "words": [
+    4097,
+    8192,
+    12289,
+    24576,
+    20481,
+    28672,
+    40960,
+    0
+  ]
+}

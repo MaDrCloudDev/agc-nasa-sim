@@ -1,0 +1,24 @@
+{
+  "name": "apollo-js",
+  "version": "0.1.0",
+  "description": "Browser-based Apollo Guidance Computer emulator",
+  "type": "module",
+  "scripts": {
+    "dev": "bunx --bun vite",
+    "build": "bunx --bun vite build",
+    "preview": "bunx --bun vite preview",
+    "test": "bun test src/**/*.test.ts",
+    "test:watch": "bun test --watch src/**/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "svelte": "^5.0.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vitest": "^3.0.0"
+  }
+}
