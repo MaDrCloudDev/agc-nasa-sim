@@ -1,74 +1,98 @@
 <script lang="ts">
-  import { getState } from '../stores/emulator.js';
+  import { tick } from "svelte";
+  import { getState } from "../stores/emulator.svelte.js";
 
-  const state = $derived(getState());
+  let scrollContainer = $state<HTMLDivElement | undefined>(undefined);
+
+  let machineState = $derived(getState());
 
   function toHex(val: number): string {
-    return val.toString(16).toUpperCase().padStart(4, '0');
+    return val.toString(16).toUpperCase().padStart(4, "0");
   }
 
-  const trace = $derived(state?.trace ?? []);
+  let trace = $derived(machineState?.trace ?? []);
+
+  $effect(() => {
+    if (trace.length > 0 && scrollContainer) {
+      tick().then(() => {
+        if (scrollContainer) {
+          scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        }
+      });
+    }
+  });
 </script>
 
 <div class="trace-panel">
-  <h2>Trace Log</h2>
-  
-  <div class="trace-table">
-    <div class="header">
-      <span class="cycle">CYCLE</span>
-      <span class="addr">ADDR</span>
-      <span class="raw">RAW</span>
-      <span class="inst">INSTRUCTION</span>
-      <span class="result">RESULT</span>
-    </div>
-    <div class="rows">
-      {#each trace as entry}
-        <div class="row">
-          <span class="cycle">{entry.cycle.toString().padStart(5)}</span>
-          <span class="addr">{toHex(entry.address)}</span>
-          <span class="raw">0x{toHex(entry.raw)}</span>
-          <span class="inst">
-            <span class="mnemonic">{entry.mnemonic}</span>
-            {#if entry.operand > 0}
-              <span class="operand">{toHex(entry.operand)}</span>
-            {/if}
-          </span>
-          <span class="result">{entry.result}</span>
-        </div>
-      {/each}
+  <h2>Trace</h2>
+
+  <div class="trace-wrapper">
+    <div class="trace-table" bind:this={scrollContainer}>
+      <div class="header">
+        <span class="cyc">CYC</span>
+        <span class="adr">ADR</span>
+        <span class="inst">INST</span>
+        <span class="res">RESULT</span>
+      </div>
+      <div class="rows">
+        {#each trace as entry}
+          <div class="row">
+            <span class="cyc">{entry.cycle.toString().padStart(4)}</span>
+            <span class="adr">{toHex(entry.address)}</span>
+            <span class="inst">
+              <span class="mnemonic">{entry.mnemonic}</span>
+              {#if entry.operand > 0}
+                <span class="operand">{entry.operand}</span>
+              {/if}
+            </span>
+            <span class="res">{entry.result}</span>
+          </div>
+        {/each}
+      </div>
     </div>
   </div>
 </div>
 
 <style>
   .trace-panel {
-    flex: 1;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
-    overflow: hidden;
+    padding: 0.5rem;
+    box-sizing: border-box;
   }
 
   h2 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1rem;
+    margin: 0 0 0.3rem 0;
+    font-size: 0.9rem;
     color: #00ff88;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .trace-wrapper {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .trace-table {
-    flex: 1;
+    height: 100%;
     background: #1a1a1a;
     border: 1px solid #333;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     font-size: 0.75rem;
+    box-sizing: border-box;
   }
 
   .header {
     display: flex;
-    padding: 0.25rem;
+    padding: 0.2rem;
     background: #252525;
     position: sticky;
     top: 0;
+    font-size: 0.7rem;
   }
 
   .header span {
@@ -82,46 +106,58 @@
 
   .row {
     display: flex;
-    padding: 0.1rem 0.25rem;
+    flex-wrap: nowrap;
+    padding: 0.1rem 0.2rem;
     border-bottom: 1px solid #1a1a1a;
+    min-height: 1.2em;
   }
 
   .row:hover {
     background: #252525;
   }
 
-  .cycle {
-    width: 60px;
-    color: #888;
-  }
-
-  .addr {
+  .cyc {
     width: 50px;
     color: #888;
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 8px;
+    box-sizing: border-box;
   }
 
-  .raw {
-    width: 70px;
+  .adr {
+    width: 50px;
     color: #888;
+    flex-shrink: 0;
+    padding-right: 8px;
+    box-sizing: border-box;
   }
 
   .inst {
-    width: 150px;
+    width: 90px;
     color: #e0e0e0;
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding-right: 8px;
+    box-sizing: border-box;
   }
 
   .mnemonic {
     color: #ff00ff;
     font-weight: bold;
-    margin-right: 0.5rem;
   }
 
   .operand {
     color: #ffff00;
+    margin-left: 4px;
   }
 
-  .result {
+  .res {
     flex: 1;
     color: #00ffff;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>

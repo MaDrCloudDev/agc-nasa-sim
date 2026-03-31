@@ -76,6 +76,7 @@ export function stop(): void {
 export function loadProgram(program: ProgramData): void {
   stop();
   const c = ensureCpu();
+  c.reset();
   c.loadProgram(program);
   sync();
 }

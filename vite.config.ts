@@ -9,4 +9,10 @@ export default defineConfig({
       '@utils': '/src/utils',
     },
   },
+  server: {
+    hmr: {
+      clientPort: 5173,
+      port: 5173,
+    },
+  },
 });
