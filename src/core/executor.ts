@@ -56,12 +56,16 @@ export function executeInstruction(cpu: AgcCpu, instruction: DecodedInstruction)
       return toSigned16(cpu.acc) < 0 ? `JMP 0x${operand.toString(16).padStart(4, '0')}` : 'no jump';
 
     case OP_IN:
-      cpu.acc = cpu.input[operand] ?? 0;
+      if (operand === 0 && cpu.hasKeyboardReader) {
+        cpu.acc = cpu.readKeyboard();
+      } else {
+        cpu.acc = cpu.input[operand] ?? 0;
+      }
       cpu.pc = mask16(cpu.pc + 1);
       return `ACC = IN[${operand}] = ${cpu.acc}`;
 
     case OP_OUT:
-      cpu.output[operand] = cpu.acc;
+      cpu.writeDisplay(operand, cpu.acc);
       cpu.pc = mask16(cpu.pc + 1);
       return `OUT[${operand}] = ${cpu.acc}`;
 

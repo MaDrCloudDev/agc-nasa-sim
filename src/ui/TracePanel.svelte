@@ -1,24 +1,23 @@
 <script lang="ts">
-  import { tick } from "svelte";
-  import { getState } from "../stores/emulator.svelte.js";
+  interface Props {
+    trace: { cycle: number; address: number; raw: number; mnemonic: string; operand: number; result: string }[];
+  }
+
+  let { trace }: Props = $props();
 
   let scrollContainer = $state<HTMLDivElement | undefined>(undefined);
-
-  let machineState = $derived(getState());
 
   function toHex(val: number): string {
     return val.toString(16).toUpperCase().padStart(4, "0");
   }
 
-  let trace = $derived(machineState?.trace ?? []);
-
   $effect(() => {
     if (trace.length > 0 && scrollContainer) {
-      tick().then(() => {
+      setTimeout(() => {
         if (scrollContainer) {
           scrollContainer.scrollTop = scrollContainer.scrollHeight;
         }
-      });
+      }, 0);
     }
   });
 </script>

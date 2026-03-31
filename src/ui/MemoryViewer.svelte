@@ -1,10 +1,13 @@
 <script lang="ts">
-  import { getState } from '../stores/emulator.svelte.js';
+  interface Props {
+    memory: Uint16Array;
+    pc: number;
+  }
 
-  const state = $derived(getState());
+  let { memory, pc }: Props = $props();
 
   function toHex(val: number): string {
-    return val.toString(16).toUpperCase().padStart(4, '0');
+    return val.toString(16).toUpperCase().padStart(4, "0");
   }
 
   function charDisplay(val: number): string {
@@ -27,8 +30,8 @@
     <div class="rows">
       {#each { length: 20 } as _, i}
         {@const addr = i * 8}
-        {@const words = state?.memory ? Array.from(state.memory.slice(addr, addr + 8)) : []}
-        <div class="row" class:current={state && addr <= state.pc && state.pc < addr + 8}>
+        {@const words = Array.from(memory.slice(addr, addr + 8))}
+        <div class="row" class:current={addr <= pc && pc < addr + 8}>
           <span class="addr">{toHex(addr)}</span>
           <span class="data">{words.map(w => toHex(w)).join(' ')}</span>
           <span class="chars">{words.map(w => charDisplay(w)).join('')}</span>

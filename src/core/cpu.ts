@@ -20,9 +20,37 @@ export class AgcCpu {
   output: Record<number, number> = {};
   currentInstruction: DecodedInstruction | null = null;
   trace: TraceEntry[] = [];
+  private _keyboardReader: (() => number) | null = null;
+  private _outputWriter: ((channel: number, value: number) => void) | null = null;
 
   constructor(memorySize?: number) {
     this.memory = new Memory(memorySize);
+  }
+
+  setKeyboardReader(reader: () => number): void {
+    this._keyboardReader = reader;
+  }
+
+  setOutputWriter(writer: (channel: number, value: number) => void): void {
+    this._outputWriter = writer;
+  }
+
+  get hasKeyboardReader(): boolean {
+    return this._keyboardReader !== null;
+  }
+
+  readKeyboard(): number {
+    if (this._keyboardReader) {
+      return this._keyboardReader();
+    }
+    return this.input[0] ?? 0;
+  }
+
+  writeDisplay(channel: number, value: number): void {
+    if (this._outputWriter) {
+      this._outputWriter(channel, value);
+    }
+    this.output[channel] = value;
   }
 
   step(): void {

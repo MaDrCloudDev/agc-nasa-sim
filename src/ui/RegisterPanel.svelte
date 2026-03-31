@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { getState } from '../stores/emulator.svelte.js';
+  import { getState } from "../stores/emulator.svelte.js";
 
   const state = $derived(getState());
 
   function toHex(val: number): string {
-    return val.toString(16).toUpperCase().padStart(4, '0');
+    return val.toString(16).toUpperCase().padStart(4, "0");
   }
 </script>
 
 <div class="register-panel">
   <h2>Registers</h2>
-  
+
   <div class="reg-row">
     <div class="reg">
       <span class="name">PC</span>
@@ -21,7 +21,7 @@
       <span class="value">{toHex(state?.acc ?? 0)}</span>
     </div>
   </div>
-  
+
   <div class="reg-row">
     <div class="reg">
       <span class="name">Z</span>
@@ -32,7 +32,7 @@
       <span class="value">{toHex(state?.l ?? 0)}</span>
     </div>
   </div>
-  
+
   <div class="reg-row">
     <div class="reg">
       <span class="name">Q</span>
