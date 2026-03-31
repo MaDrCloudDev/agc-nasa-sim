@@ -105,6 +105,7 @@ export class AgcCpu {
       input: { ...this.input },
       output: { ...this.output },
       currentInstruction: this.currentInstruction,
+      trace: [...this.trace],
     };
   }
 }

@@ -1,18 +1,77 @@
 <script lang="ts">
-  let message = 'AGC Emulator — Phase 2+';
+  import ControlPanel from './ControlPanel.svelte';
+  import RegisterPanel from './RegisterPanel.svelte';
+  import MemoryViewer from './MemoryViewer.svelte';
+  import TracePanel from './TracePanel.svelte';
 </script>
 
-<main>
-  <h1>{message}</h1>
-</main>
+<div class="app">
+  <header>
+    <h1>AGC Emulator</h1>
+  </header>
+  
+  <div class="main">
+    <aside class="left-panel">
+      <ControlPanel />
+      <RegisterPanel />
+    </aside>
+    
+    <main class="center-panel">
+      <MemoryViewer />
+    </main>
+    
+    <aside class="right-panel">
+      <TracePanel />
+    </aside>
+  </div>
+</div>
 
 <style>
-  main {
+  .app {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     height: 100vh;
+    background: #0a0a0a;
     color: #e0e0e0;
+  }
+
+  header {
+    background: #1a1a1a;
+    border-bottom: 1px solid #333;
+    padding: 0.5rem 1rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #00ff88;
     font-family: 'Courier New', monospace;
+  }
+
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .left-panel {
+    width: 300px;
+    border-right: 1px solid #333;
+    overflow-y: auto;
+    background: #0f0f0f;
+  }
+
+  .center-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .right-panel {
+    width: 500px;
+    border-left: 1px solid #333;
+    background: #0f0f0f;
+    overflow: hidden;
   }
 </style>

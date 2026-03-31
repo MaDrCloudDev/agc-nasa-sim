@@ -19,6 +19,7 @@ export interface MachineState {
   input: Record<number, number>;
   output: Record<number, number>;
   currentInstruction: DecodedInstruction | null;
+  trace: TraceEntry[];
 }
 
 export interface TraceEntry {
