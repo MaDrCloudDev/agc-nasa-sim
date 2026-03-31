@@ -1,8 +1,16 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import ControlPanel from './ControlPanel.svelte';
   import RegisterPanel from './RegisterPanel.svelte';
   import MemoryViewer from './MemoryViewer.svelte';
   import TracePanel from './TracePanel.svelte';
+  import { loadProgram } from '../stores/emulator.js';
+  import counterDemo from '../programs/counter-demo.json';
+  import type { ProgramData } from '../core/types.js';
+
+  onMount(() => {
+    loadProgram(counterDemo as ProgramData);
+  });
 </script>
 
 <div class="app">
