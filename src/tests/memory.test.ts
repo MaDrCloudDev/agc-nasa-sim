@@ -1,81 +1,51 @@
 import { describe, it, expect } from 'vitest';
-import { Memory } from '../core/memory.js';
-import { InvalidMemoryAccess } from '../core/types.js';
+import {
+  BANK_WINDOW_BASE,
+  BANK_WINDOW_SIZE,
+  Block2Memory,
+  ERASABLE_SIZE,
+} from '../core/block2/memory.js';
+import { data15FromWord } from '../core/block2/word.js';
+import { InvalidMemoryAccess, WriteToFixedMemory } from '../core/types.js';
 
-describe('Memory', () => {
-  it('creates memory of given size', () => {
-    const mem = new Memory(100);
-    expect(mem.size).toBe(100);
+describe('block2/memory', () => {
+  it('starts with zeroed erasable and fixed memory', () => {
+    const mem = new Block2Memory();
+
+    expect(mem.read(0o0, 0)).toBe(0);
+    expect(mem.read(BANK_WINDOW_BASE, 0)).toBe(0);
   });
 
-  it('creates memory with default size', () => {
-    const mem = new Memory();
-    expect(mem.size).toBe(4096);
+  it('writes erasable words with regenerated parity', () => {
+    const mem = new Block2Memory();
+
+    mem.write(0o10, 0o12345);
+
+    expect(data15FromWord(mem.read(0o10, 0))).toBe(0o12345);
   });
 
-  it('reads initial zero values', () => {
-    const mem = new Memory(10);
-    expect(mem.read(0)).toBe(0);
-    expect(mem.read(5)).toBe(0);
-    expect(mem.read(9)).toBe(0);
+  it('loads fixed-bank words into the bank window', () => {
+    const mem = new Block2Memory();
+
+    mem.load(BANK_WINDOW_BASE, [0o1, 0o2, 0o3], 0);
+
+    expect(data15FromWord(mem.read(BANK_WINDOW_BASE + 0, 0))).toBe(0o1);
+    expect(data15FromWord(mem.read(BANK_WINDOW_BASE + 1, 0))).toBe(0o2);
+    expect(data15FromWord(mem.read(BANK_WINDOW_BASE + 2, 0))).toBe(0o3);
   });
 
-  it('writes and reads values', () => {
-    const mem = new Memory(100);
-    mem.write(0, 42);
-    expect(mem.read(0)).toBe(42);
-    mem.write(50, 0xFFFF);
-    expect(mem.read(50)).toBe(0xFFFF);
+  it('rejects direct writes to fixed memory', () => {
+    const mem = new Block2Memory();
+
+    expect(() => mem.write(BANK_WINDOW_BASE, 1)).toThrow(WriteToFixedMemory);
   });
 
-  it('normalizes values to 16-bit unsigned on write', () => {
-    const mem = new Memory(10);
-    mem.write(0, 0x12345);
-    expect(mem.read(0)).toBe(0x2345);
-    mem.write(1, -1);
-    expect(mem.read(1)).toBe(0xFFFF);
-  });
+  it('throws on invalid addresses', () => {
+    const mem = new Block2Memory();
 
-  it('throws on out-of-bounds read', () => {
-    const mem = new Memory(10);
-    expect(() => mem.read(10)).toThrow(InvalidMemoryAccess);
-    expect(() => mem.read(-1)).toThrow(InvalidMemoryAccess);
-  });
-
-  it('throws on out-of-bounds write', () => {
-    const mem = new Memory(10);
-    expect(() => mem.write(10, 0)).toThrow(InvalidMemoryAccess);
-    expect(() => mem.write(-1, 0)).toThrow(InvalidMemoryAccess);
-  });
-
-  it('loads program words at start address', () => {
-    const mem = new Memory(100);
-    mem.load(5, [100, 200, 300]);
-    expect(mem.read(5)).toBe(100);
-    expect(mem.read(6)).toBe(200);
-    expect(mem.read(7)).toBe(300);
-  });
-
-  it('normalizes values during load', () => {
-    const mem = new Memory(100);
-    mem.load(0, [0x10000, -1]);
-    expect(mem.read(0)).toBe(0);
-    expect(mem.read(1)).toBe(0xFFFF);
-  });
-
-  it('dumps a range of memory', () => {
-    const mem = new Memory(100);
-    mem.write(0, 10);
-    mem.write(1, 20);
-    mem.write(2, 30);
-    const dump = mem.dump(0, 3);
-    expect(dump).toEqual([10, 20, 30]);
-  });
-
-  it('throws on invalid dump range', () => {
-    const mem = new Memory(10);
-    expect(() => mem.dump(5, 3)).toThrow(InvalidMemoryAccess);
-    expect(() => mem.dump(-1, 5)).toThrow(InvalidMemoryAccess);
-    expect(() => mem.dump(0, 11)).toThrow(InvalidMemoryAccess);
+    expect(() => mem.read(-1, 0)).toThrow(InvalidMemoryAccess);
+    expect(() => mem.read(BANK_WINDOW_BASE + BANK_WINDOW_SIZE, 0)).toThrow(InvalidMemoryAccess);
+    expect(() => mem.write(ERASABLE_SIZE + BANK_WINDOW_SIZE, 0)).toThrow(InvalidMemoryAccess);
+    expect(() => mem.load(BANK_WINDOW_BASE + BANK_WINDOW_SIZE, [1], 0)).toThrow(InvalidMemoryAccess);
   });
 });
