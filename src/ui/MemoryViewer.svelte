@@ -2,12 +2,22 @@
   interface Props {
     memory: Uint16Array;
     pc: number;
+    format?: 'hex16' | 'octal15';
   }
 
-  let { memory, pc }: Props = $props();
+  let { memory, pc, format = 'hex16' }: Props = $props();
 
   function toHex(val: number): string {
     return val.toString(16).toUpperCase().padStart(4, "0");
+  }
+
+  function toOctAddr(val: number): string {
+    return val.toString(8).toUpperCase().padStart(4, "0");
+  }
+
+  function toOctData15(word16: number): string {
+    const data15 = word16 & 0x7fff;
+    return data15.toString(8).toUpperCase().padStart(5, "0");
   }
 
   function charDisplay(val: number): string {
@@ -25,16 +35,26 @@
     <div class="header">
       <span class="addr">ADDR</span>
       <span class="data">DATA</span>
-      <span class="chars">CH</span>
+      {#if format === 'hex16'}
+        <span class="chars">CH</span>
+      {/if}
     </div>
     <div class="rows">
       {#each { length: 20 } as _, i}
         {@const addr = i * 8}
         {@const words = Array.from(memory.slice(addr, addr + 8))}
         <div class="row" class:current={addr <= pc && pc < addr + 8}>
-          <span class="addr">{toHex(addr)}</span>
-          <span class="data">{words.map(w => toHex(w)).join(' ')}</span>
-          <span class="chars">{words.map(w => charDisplay(w)).join('')}</span>
+          <span class="addr">{format === 'octal15' ? toOctAddr(addr) : toHex(addr)}</span>
+          <span class="data">
+            {#if format === 'octal15'}
+              {words.map(w => toOctData15(w)).join(' ')}
+            {:else}
+              {words.map(w => toHex(w)).join(' ')}
+            {/if}
+          </span>
+          {#if format === 'hex16'}
+            <span class="chars">{words.map(w => charDisplay(w)).join('')}</span>
+          {/if}
         </div>
       {/each}
     </div>
@@ -51,8 +71,8 @@
   }
 
   h2 {
-    margin: 0 0 0.3rem 0;
-    font-size: 0.9rem;
+    margin: 0;
+    font-size: 0.8rem;
     color: #00ff88;
     text-align: left;
   }
@@ -62,17 +82,17 @@
     background: #1a1a1a;
     border: 1px solid #333;
     overflow: auto;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     font-family: monospace;
   }
 
   .header {
     display: flex;
-    padding: 0.15rem 0.2rem;
+    padding: 0.1rem 0.15rem;
     background: #252525;
     position: sticky;
     top: 0;
-    font-size: 0.65rem;
+    font-size: 0.5rem;
   }
 
   .header span {
@@ -86,7 +106,7 @@
 
   .row {
     display: flex;
-    padding: 0.08rem 0.15rem;
+    padding: 0.05rem 0.1rem;
   }
 
   .row:hover {
@@ -99,7 +119,7 @@
   }
 
   .addr {
-    width: 45px;
+    width: 38px;
     color: #888;
     flex-shrink: 0;
   }
@@ -112,7 +132,7 @@
   }
 
   .chars {
-    width: 60px;
+    width: 45px;
     color: #666;
     flex-shrink: 0;
   }

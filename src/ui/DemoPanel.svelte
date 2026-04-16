@@ -51,6 +51,29 @@
     </div>
   {/if}
 
+  <div class="help-section">
+    <div class="help-title">HOW TO USE</div>
+    <div class="help-item"><strong>STEP</strong> — Run one instruction</div>
+    <div class="help-item"><strong>RUN</strong> — Run continuously</div>
+    <div class="help-item"><strong>STOP</strong> — Halt execution</div>
+    <div class="help-item"><strong>RESET</strong> — Clear and reload</div>
+  </div>
+
+  <div class="help-section">
+    <div class="help-title">OPCODES</div>
+    <div class="help-item">0x0 — NOP</div>
+    <div class="help-item">0x1 — LOAD addr</div>
+    <div class="help-item">0x2 — STORE addr</div>
+    <div class="help-item">0x3 — ADD addr</div>
+    <div class="help-item">0x4 — SUB addr</div>
+    <div class="help-item">0x5 — JMP addr</div>
+    <div class="help-item">0x6 — JZ addr</div>
+    <div class="help-item">0x7 — JN addr</div>
+    <div class="help-item">0x8 — IN ch</div>
+    <div class="help-item">0x9 — OUT ch</div>
+    <div class="help-item">0xA — HALT</div>
+  </div>
+
   <div class="title">Demo: {program.name}</div>
 
   <div class="buttons">
@@ -180,4 +203,31 @@
   .stat .value.halted {
     color: #ff4444;
   }
+
+
+  .help-section {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .help-title {
+    color: #00ff88;
+    font-family: "Courier New", monospace;
+    margin-bottom: 0.3rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+
+  .help-item {
+    color: #888;
+    margin-bottom: 0.15rem;
+    font-family: "Courier New", monospace;
+  }
+
+  .help-item strong {
+    color: #aaa;
+  }
+
 </style>

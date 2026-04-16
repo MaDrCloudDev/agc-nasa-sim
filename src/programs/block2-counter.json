@@ -1,0 +1,14 @@
+{
+  "name": "Block II: Counter",
+  "startAddress": 1024,
+  "entryPoint": 1024,
+  "words": [
+    1544,
+    3081,
+    2824,
+    4169,
+    0,
+    0,
+    1
+  ]
+}

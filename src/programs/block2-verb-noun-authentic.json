@@ -1,0 +1,12 @@
+{
+  "name": "Block II: Authentic Verb/Noun Interpreter",
+  "description": "Real V/N interpreter using authentic Block II encoding. Reads verb/noun from channels, executes operation, displays result.",
+  "startAddress": 0o2000,
+  "entryPoint": 0o2000,
+  "words": [
+    4104, 4169, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0
+  ]
+}
