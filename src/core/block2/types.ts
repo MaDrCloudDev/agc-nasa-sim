@@ -7,7 +7,7 @@ export interface Block2DecodedInstruction {
   // New authentic addressing fields
   address?: number;  // For memory-reference instructions (12/10/9-bit depending on code type)
   channel?: number;  // For I/O instructions
-  // Legacy fields (for compatibility during transition)
+  // Legacy fields kept during the transition.
   orderCode9?: number;
   operand6?: number;
 }

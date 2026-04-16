@@ -34,7 +34,12 @@
                 : entry.address.toString(16).padStart(4, "0");
 
             const last = entries[entries.length - 1];
-            if (last && last.mnemonic === entry.mnemonic && last.address === addrStr) {
+            if (
+                last &&
+                last.mnemonic === entry.mnemonic &&
+                last.address === addrStr &&
+                last.result === entry.result
+            ) {
                 last.count++;
             } else {
                 entries.push({

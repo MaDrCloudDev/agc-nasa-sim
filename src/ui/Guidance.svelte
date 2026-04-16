@@ -7,14 +7,14 @@
 
   function keyLabel(k: number): string {
     switch (k) {
-      case 1: return "ENTER";
-      case 2: return "PROCEED";
-      case 3: return "CLEAR";
-      case 4: return "RESET";
-      case 5: return "VERB";
-      case 6: return "NOUN";
-      case 7: return "KEY REL";
-      case 8: return "MINUS";
+      case 10: return "ENTER";
+      case 11: return "PROCEED";
+      case 12: return "CLEAR";
+      case 13: return "RESET";
+      case 14: return "VERB";
+      case 15: return "NOUN";
+      case 16: return "KEY REL";
+      case 17: return "MINUS";
       default: return String(k);
     }
   }
@@ -22,15 +22,15 @@
 
 <section class="guide" aria-label="Guidance">
   <div class="card">
-    <div class="title">DSKY Controls</div>
+    <div class="title">Quick Start</div>
     <ol class="steps">
       <li>Press <strong>VERB</strong>, enter 2 digits, then <strong>ENTR</strong>.</li>
       <li>Press <strong>NOUN</strong>, enter 2 digits, then <strong>ENTR</strong>.</li>
       <li>Press <strong>PRO</strong> to execute. Result shows on <strong>R1</strong>.</li>
     </ol>
     <div class="hint">
-      <span class="label">Pending key:</span>
-      <span class="value">{pendingKey === null ? "—" : keyLabel(pendingKey)}</span>
+      <span class="label">Next key:</span>
+      <span class="value">{pendingKey === null ? "none" : keyLabel(pendingKey)}</span>
     </div>
   </div>
 </section>

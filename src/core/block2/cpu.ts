@@ -24,7 +24,7 @@ export class AgcBlock2Cpu {
 
   memory: Block2Memory;
 
-  // Channels will be added in Phase 5; keep a placeholder for UI compatibility.
+  // Later phases expand the channel model.
   io: Block2Io = new Block2Io();
 
   currentInstruction: Block2DecodedInstruction | null = null;
@@ -41,7 +41,7 @@ export class AgcBlock2Cpu {
   }
 
   get acc(): number {
-    // UI compatibility: expose A as a number (15-bit)
+    // Expose A as a plain number for the UI.
     return this.a;
   }
 
@@ -65,8 +65,8 @@ export class AgcBlock2Cpu {
   }
 
   loadProgram(program: ProgramData): void {
-    // For the surgical path we accept the existing ProgramData shape.
-    // The program's words are treated as raw 15-bit data (parity re-generated).
+    // Accept the current ProgramData shape.
+    // Words are treated as raw 15-bit data and parity is regenerated.
     this.memory.load(program.startAddress, program.words, this.fb);
     this.z = program.entryPoint ?? program.startAddress;
   }
@@ -138,7 +138,7 @@ export class AgcBlock2Cpu {
     };
   }
 
-  // Channel semantics (surgical): channel 01 maps to L, channel 02 maps to Q.
+  // Channel semantics for this build: channel 01 maps to L, channel 02 maps to Q.
   readChannel(ch: number): AgcData15 {
     if (ch === 0o01) return this.l;
     if (ch === 0o02) return this.q;

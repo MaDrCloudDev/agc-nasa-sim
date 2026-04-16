@@ -32,6 +32,8 @@
   let memory = $state<Uint16Array>(new Uint16Array(4096));
 
   let dispProg = $state<number | null>(null);
+  let loadedProgramStart = $state<number | null>(null);
+  let loadedProgramLength = $state<number | null>(null);
   let dispVerb = $state<number | null>(null);
   let dispNoun = $state<number | null>(null);
   let dispR1 = $state<number | null>(null);
@@ -132,6 +134,8 @@
     cpuB2.reset();
     keyboardBuffer.length = 0;
     cpuB2.loadProgram(program);
+    loadedProgramStart = program.startAddress;
+    loadedProgramLength = program.words.length;
     dispProg = program.entryPoint;
     dispVerb = null;
     dispNoun = null;
@@ -412,7 +416,13 @@
         <Guidance pendingKey={keyboardBuffer[0] ?? null} />
       {/if}
 
-      <MemoryViewer {memory} {pc} format="octal15" />
+        <MemoryViewer
+          {memory}
+          {pc}
+          format="octal15"
+        loadedProgramStart={loadedProgramStart}
+        loadedProgramLength={loadedProgramLength}
+        />
     </main>
 
     <button
@@ -559,14 +569,36 @@
     background: #00ff88;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 900px) {
+    .main {
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .left-panel,
+    .center-panel,
+    .right-panel {
+      width: 100% !important;
+      min-width: 0;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+
     .left-panel,
     .right-panel {
-      min-width: 200px;
+      padding-bottom: 0.5rem;
     }
-    /* .center-panel */
+
     .center-panel {
-      min-width: 150px;
+      min-height: 20rem;
+    }
+
+    .right-panel {
+      min-height: 16rem;
+    }
+
+    .resize-handle {
+      display: none;
     }
   }
 </style>

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { AgcBlock2Cpu } from '../core/block2/cpu.js';
+import { encodeWRITE } from '../core/block2/decoder.js';
 
 describe('block2/cpu skeleton', () => {
   it('resets to zero state', () => {
@@ -39,5 +40,22 @@ describe('block2/cpu skeleton', () => {
     expect(cpu.trace.length).toBe(1);
     expect(cpu.trace[0]!.mnemonic).toBe('???');
   });
-});
 
+  it('records the executed address and operand for I/O instructions', () => {
+    const cpu = new AgcBlock2Cpu();
+    cpu.a = 0o12345;
+    cpu.loadProgram({
+      name: 'write',
+      startAddress: 0o2000,
+      entryPoint: 0o2000,
+      words: [encodeWRITE(0o11)],
+    });
+
+    cpu.step();
+
+    expect(cpu.trace).toHaveLength(1);
+    expect(cpu.trace[0]!.address).toBe(0o2000);
+    expect(cpu.trace[0]!.operand).toBe(0o11);
+    expect(cpu.readChannel(0o11)).toBe(0o12345);
+  });
+});

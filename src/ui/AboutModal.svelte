@@ -5,6 +5,19 @@
     }
 
     let { open, onClose }: Props = $props();
+
+    $effect(() => {
+        if (!open) return;
+
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                onClose();
+            }
+        };
+
+        window.addEventListener("keydown", onKeyDown);
+        return () => window.removeEventListener("keydown", onKeyDown);
+    });
 </script>
 
 {#if open}
@@ -29,19 +42,15 @@
                 <section>
                     <h2>What is this?</h2>
                     <p>
-                        A browser-based emulator of the <strong
-                            >Block II Apollo Guidance Computer (AGC)</strong
-                        >, the real flight computer that guided the Apollo
-                        spacecraft to the Moon and back.
+                        A browser-based emulator of the <strong>Block II Apollo Guidance Computer (AGC)</strong>.
                     </p>
                 </section>
 
                 <section>
                     <h2>What does it do?</h2>
                     <p>
-                        This emulator simulates the core AGC hardware: a 15-bit
-                        CPU, 36 KB of addressable memory (2 KB erasable, 34 KB
-                        fixed ROM), and I/O channels. You can:
+                        It simulates the core AGC hardware: a 15-bit CPU, 36 KB
+                        of addressable memory, and I/O channels.
                     </p>
                     <ul>
                         <li>Load and execute AGC machine code programs</li>
@@ -60,19 +69,14 @@
                 <section>
                     <h2>How it works</h2>
                     <p>
-                        The emulator implements the <strong
-                            >Block II instruction set</strong
-                        > (the real AGC hardware used during Apollo 11–17). Each
+                        The emulator implements the <strong>Block II instruction set</strong>. Each
                         instruction is decoded and executed in a single cycle. Memory
-                        is split into erasable (RAM) and fixed (ROM) banks. I/O operations
-                        (keyboard input, display output) happen through numbered
-                        channels.
+                        is split into erasable RAM and fixed ROM banks. I/O
+                        operations happen through numbered channels.
                     </p>
                     <p>
-                        <em>Historically accurate:</em> The instruction formats,
-                        addressing modes, and register behavior match the real AGC
-                        specification. This is not a simplified emulator—it's a genuine
-                        simulation.
+                        The instruction formats, addressing modes, and register
+                        behavior follow the AGC specification.
                     </p>
                 </section>
 
@@ -88,8 +92,8 @@
                             code, press <strong>ENTER</strong>.
                         </li>
                         <li>
-                            Press <strong>PROCEED</strong> to execute. The CPU will
-                            process your request and display the result.
+                            Press <strong>PROCEED</strong> to execute. The CPU
+                            displays the result on R1.
                         </li>
                         <li>
                             Use <strong>STEP</strong> to execute one cycle at a
@@ -102,24 +106,22 @@
                     <h2>What it demonstrates</h2>
                     <ul>
                         <li>
-                            <strong>Real AGC hardware:</strong> Block II instruction
-                            set, registers (A, L, Q), interrupt system.
+                            <strong>AGC hardware:</strong> Block II instruction set, registers
+                            (A, L, Q), interrupt system.
                         </li>
                         <li>
-                            <strong>Memory layout:</strong> Erasable (working) memory
-                            and fixed (ROM) banks.
+                            <strong>Memory layout:</strong> Erasable RAM and fixed ROM banks.
                         </li>
                         <li>
-                            <strong>I/O operations:</strong> Keyboard input (channel
-                            0o10) and display output (channels 0o11–0o13).
+                            <strong>I/O operations:</strong> Keyboard input (channel 0o10)
+                            and display output (channels 0o11 to 0o13).
                         </li>
                         <li>
-                            <strong>Control flow:</strong> Branches (conditional
-                            jumps), loops, and sequencing.
+                            <strong>Control flow:</strong> Branches, loops, and sequencing.
                         </li>
                         <li>
-                            <strong>Execution trace:</strong> See every instruction,
-                            track main loops, and inspect state.
+                            <strong>Execution trace:</strong> See each instruction and the
+                            resulting state.
                         </li>
                     </ul>
                 </section>
@@ -127,16 +129,12 @@
                 <section>
                     <h2>About the code</h2>
                     <p>
-                        This is a <strong>TypeScript + Svelte 5</strong> project.
-                        The core emulator (CPU, memory, decoder, executor) is pure
-                        JavaScript with no UI dependencies. The UI is a three-panel
-                        layout: left (DSKY or demo controls), center (memory), right
-                        (execution trace).
+                        This is a <strong>TypeScript + Svelte 5</strong> project. The core
+                        emulator has no UI dependencies. The UI uses three panels:
+                        left for the DSKY, center for memory, and right for the trace.
                     </p>
                     <p>
-                        Main loop detection in the trace compresses repeated
-                        instruction sequences, making it easy to spot
-                        interesting behavior outside the main control loop.
+                        Repeated trace entries are compressed when they are the same.
                     </p>
                 </section>
             </div>
@@ -258,8 +256,4 @@
         color: #fff;
     }
 
-    em {
-        color: #888;
-        font-style: italic;
-    }
 </style>

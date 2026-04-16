@@ -245,19 +245,19 @@
 
   <div class="help-section">
     <div class="help-title">DSKY CONTROLS</div>
-    <div><strong>VERB</strong> — Enter verb</div>
-    <div><strong>NOUN</strong> — Enter noun</div>
-    <div><strong>ENTER</strong> — Confirm</div>
-    <div><strong>CLEAR</strong> — Clear</div>
-    <div><strong>RESET</strong> — Reset CPU</div>
+    <div><strong>VERB</strong>: Enter verb</div>
+    <div><strong>NOUN</strong>: Enter noun</div>
+    <div><strong>ENTER</strong>: Confirm</div>
+    <div><strong>CLEAR</strong>: Clear</div>
+    <div><strong>RESET</strong>: Reset CPU</div>
   </div>
 
   <div class="help-section">
     <div class="help-title">CHANNELS</div>
-    <div>CH0 — Keyboard IN</div>
-    <div>CH1 — R1</div>
-    <div>CH2 — R2</div>
-    <div>CH3 — R3</div>
+    <div>CH0: Keyboard IN</div>
+    <div>CH1: R1</div>
+    <div>CH2: R2</div>
+    <div>CH3: R3</div>
   </div>
 </div>
 

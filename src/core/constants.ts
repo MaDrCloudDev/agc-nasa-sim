@@ -1,7 +1,7 @@
 // Memory
 export const MEMORY_SIZE = 4096;
 
-// Opcode table (v1 — Phase 1)
+// Opcode table for v1, phase 1.
 export const OP_NOP  = 0x00;
 export const OP_LOAD = 0x01;
 export const OP_STORE = 0x02;
