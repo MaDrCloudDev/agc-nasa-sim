@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AgcBlock2Cpu } from '../../core/block2/cpu.js';
+import { AgcBlock2Cpu } from '../core/block2/cpu.js';
 import {
   encodeREAD,
   encodeWRITE,
@@ -8,8 +8,8 @@ import {
   encodeROR,
   encodeWOR,
   encodeRXOR,
-} from '../../core/block2/decoder.js';
-import { mask15 } from '../../core/block2/word.js';
+} from '../core/block2/decoder.js';
+import { mask15 } from '../core/block2/word.js';
 
 function prog(words15: number[]) {
   return { name: 'io', startAddress: 0o2000, entryPoint: 0o2000, words: words15 };

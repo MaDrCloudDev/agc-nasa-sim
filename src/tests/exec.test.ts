@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AgcBlock2Cpu } from '../../core/block2/cpu.js';
+import { AgcBlock2Cpu } from '../core/block2/cpu.js';
 import {
   encodeAD,
   encodeCA,
@@ -11,8 +11,8 @@ import {
   SPECIAL_EXTEND,
   encodeTC,
   encodeTCF,
-} from '../../core/block2/decoder.js';
-import { data15FromWord, makeWordWithOddParity } from '../../core/block2/word.js';
+} from '../core/block2/decoder.js';
+import { data15FromWord, makeWordWithOddParity } from '../core/block2/word.js';
 
 function prog(words15: number[]) {
   return {

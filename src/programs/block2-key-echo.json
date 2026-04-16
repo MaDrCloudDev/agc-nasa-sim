@@ -1,15 +1,13 @@
 {
   "name": "Block II: Key Echo",
-  "startAddress": 1024,
-  "entryPoint": 1024,
+  "startAddress": 64,
+  "entryPoint": 64,
   "words": [
     4104,
-    575,
-    8,
     4169,
-    0,
-    0,
-    0,
-    63
+    4104,
+    4169,
+    4104,
+    4169
   ]
 }

@@ -12,6 +12,10 @@ export class Block2Io {
     this.channels.set(ch, mask15(value));
   }
 
+  reset(): void {
+    this.channels.clear();
+  }
+
   // Helpers for write-modify operations
   writeAnd(ch: number, value: AgcData15): void {
     this.write(ch, this.read(ch) & mask15(value));

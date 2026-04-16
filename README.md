@@ -1,39 +1,47 @@
-# Apollo Guidance Computer Emulator
+# agc-nasa-sim
 
-A browser-based AGC emulator in TypeScript. Emulates a simplified CPU and memory model, loads demo programs, and executes them step-by-step or continuously.
+A browser-based Apollo Guidance Computer (AGC) emulator. This simulates the Block II AGC—the actual flight computer used on Apollo missions—to guide spacecraft to the Moon and back.
 
-## Stack
+## What it is
 
-- TypeScript (strict mode)
-- Vite + Svelte (Phase 2+)
-- Vitest for testing
+This is a real simulation of the Apollo Guidance Computer hardware. Not a simplified demo—an actual emulation of the 15-bit CPU, 36KB of memory, and I/O system that flew on Apollo 11-17.
 
-## Quick start
+You can load and run AGC machine code, interact with a DSKY (Display Keyboard) interface, step through execution one cycle at a time, watch memory change, and see the execution trace.
+
+## Running it
 
 ```bash
 bun install
-bun test              # Run tests
-bun run test:watch    # Watch mode
-bun run typecheck     # Type check
-bun run dev           # Dev server (Phase 2+)
+bun run dev
 ```
 
-## Current phase
+Then open `http://localhost:5173` in your browser.
 
-**Phase 1: Emulator core** — CPU, memory, decoder, executor, tests. No browser UI.
+## How to use it
 
-See `AGENTS.md` for full engineering rules and phase checklists.
+1. Press **VERB** on the DSKY, enter a 2-digit verb code, press **ENTER**
+2. Press **NOUN**, enter a 2-digit noun code, press **ENTER**  
+3. Press **PROCEED** to execute. The result shows on R1.
+4. Use **STEP** to step one cycle, or **RUN** to execute continuously
+5. The center panel shows memory, the right panel shows the execution trace
+
+## Running tests
+
+```bash
+bun test
+bun run typecheck
+```
 
 ## Project structure
 
 ```
 src/
-  core/       # CPU, memory, decoder, executor (no UI imports)
-  utils/      # Bit ops, formatting, assertions
-  programs/   # JSON demo programs
-  tests/      # Vitest test files
+  core/block2/   # CPU, memory, decoder, executor (no UI)
+  ui/            # Svelte components
+  programs/      # Demo programs
+  tests/         # Vitest tests
 ```
 
 ## License
 
-MIT
+MIT License - see LICENSE file

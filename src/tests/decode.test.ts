@@ -1,96 +1,114 @@
 import { describe, it, expect } from 'vitest';
-import { decodeInstruction } from '../core/decoder.js';
+import {
+  encodeTC,
+  encodeCCS,
+  encodeTCF,
+  encodeCA,
+  encodeAD,
+  encodeMSK,
+  encodeNDX,
+  encodeTS,
+  encodeXCH,
+  encodeREAD,
+  encodeWRITE,
+  encodeRAND,
+  encodeWAND,
+  encodeROR,
+  encodeWOR,
+  encodeRXOR,
+  SPECIAL_EXTEND,
+  decodeBlock2Instruction,
+} from '../core/block2/decoder.js';
+import { makeWordWithOddParity } from '../core/block2/word.js';
 
-describe('decodeInstruction', () => {
-  it('decodes NOP (0x0000)', () => {
-    const d = decodeInstruction(0x0000);
-    expect(d.opcode).toBe(0x00);
-    expect(d.mnemonic).toBe('NOP');
-    expect(d.operand).toBe(0);
-    expect(d.raw).toBe(0x0000);
+describe('block2/decoder', () => {
+  it('decodes special instructions by full 15-bit code', () => {
+    const state = { extended: false };
+    const w = makeWordWithOddParity(SPECIAL_EXTEND);
+    expect(decodeBlock2Instruction(w, state).mnemonic).toBe('EXTEND');
   });
 
-  it('decodes LOAD (0x1042)', () => {
-    const d = decodeInstruction(0x1042);
-    expect(d.opcode).toBe(0x01);
-    expect(d.mnemonic).toBe('LOAD');
-    expect(d.operand).toBe(0x042);
-    expect(d.raw).toBe(0x1042);
+  it('decodes regular code instructions (TC, CCS, TCF, CA, AD, MSK)', () => {
+    const state = { extended: false };
+
+    // Use 6-bit addresses (0-63)
+    const tc = makeWordWithOddParity(encodeTC(0o34));
+    expect(decodeBlock2Instruction(tc, state).mnemonic).toBe('TC');
+
+    const ccs = makeWordWithOddParity(encodeCCS(0o56));
+    expect(decodeBlock2Instruction(ccs, state).mnemonic).toBe('CCS');
+
+    const tcf = makeWordWithOddParity(encodeTCF(0o45));
+    expect(decodeBlock2Instruction(tcf, state).mnemonic).toBe('TCF');
+
+    const ca = makeWordWithOddParity(encodeCA(0o77));
+    expect(decodeBlock2Instruction(ca, state).mnemonic).toBe('CA');
+
+    const ad = makeWordWithOddParity(encodeAD(0o77));
+    expect(decodeBlock2Instruction(ad, state).mnemonic).toBe('AD');
+
+    const msk = makeWordWithOddParity(encodeMSK(0o77));
+    expect(decodeBlock2Instruction(msk, state).mnemonic).toBe('MSK');
   });
 
-  it('decodes STORE (0x2010)', () => {
-    const d = decodeInstruction(0x2010);
-    expect(d.opcode).toBe(0x02);
-    expect(d.mnemonic).toBe('STORE');
-    expect(d.operand).toBe(0x010);
+  it('decodes quarter code instructions (NDX, TS, XCH)', () => {
+    const state = { extended: false };
+
+    const ndx = makeWordWithOddParity(encodeNDX(0o34));
+    expect(decodeBlock2Instruction(ndx, state).mnemonic).toBe('NDXE');
+
+    const ts = makeWordWithOddParity(encodeTS(0o77));
+    expect(decodeBlock2Instruction(ts, state).mnemonic).toBe('TS');
+
+    const xch = makeWordWithOddParity(encodeXCH(0o56));
+    expect(decodeBlock2Instruction(xch, state).mnemonic).toBe('XCH');
   });
 
-  it('decodes ADD (0x3007)', () => {
-    const d = decodeInstruction(0x3007);
-    expect(d.opcode).toBe(0x03);
-    expect(d.mnemonic).toBe('ADD');
-    expect(d.operand).toBe(0x007);
+  it('decodes eighth code I/O instructions', () => {
+    const state = { extended: false };
+
+    const read = makeWordWithOddParity(encodeREAD(0o77));
+    expect(decodeBlock2Instruction(read, state).mnemonic).toBe('READ');
+
+    const write = makeWordWithOddParity(encodeWRITE(0o11));
+    expect(decodeBlock2Instruction(write, state).mnemonic).toBe('WRITE');
+
+    const rand = makeWordWithOddParity(encodeRAND(0o03));
+    expect(decodeBlock2Instruction(rand, state).mnemonic).toBe('RAND');
+
+    const wand = makeWordWithOddParity(encodeWAND(0o02));
+    expect(decodeBlock2Instruction(wand, state).mnemonic).toBe('WAND');
+
+    const ror = makeWordWithOddParity(encodeROR(0o05));
+    expect(decodeBlock2Instruction(ror, state).mnemonic).toBe('ROR');
+
+    const wor = makeWordWithOddParity(encodeWOR(0o06));
+    expect(decodeBlock2Instruction(wor, state).mnemonic).toBe('WOR');
+
+    const rxor = makeWordWithOddParity(encodeRXOR(0o07));
+    expect(decodeBlock2Instruction(rxor, state).mnemonic).toBe('RXOR');
   });
 
-  it('decodes SUB (0x4005)', () => {
-    const d = decodeInstruction(0x4005);
-    expect(d.opcode).toBe(0x04);
-    expect(d.mnemonic).toBe('SUB');
-    expect(d.operand).toBe(0x005);
+  it('NDX decodes as NDXE vs NDXK depending on EXTEND state', () => {
+    const w = makeWordWithOddParity(encodeNDX(0o34));
+    expect(decodeBlock2Instruction(w, { extended: false }).mnemonic).toBe('NDXE');
+    expect(decodeBlock2Instruction(w, { extended: true }).mnemonic).toBe('NDXK');
   });
 
-  it('decodes JMP (0x5000)', () => {
-    const d = decodeInstruction(0x5000);
-    expect(d.opcode).toBe(0x05);
-    expect(d.mnemonic).toBe('JMP');
-    expect(d.operand).toBe(0x000);
-  });
+  it('extracts addresses correctly from instruction formats', () => {
+    const state = { extended: false };
 
-  it('decodes JZ (0x600A)', () => {
-    const d = decodeInstruction(0x600A);
-    expect(d.opcode).toBe(0x06);
-    expect(d.mnemonic).toBe('JZ');
-    expect(d.operand).toBe(0x00A);
-  });
+    // All instructions use 6-bit operands
+    const tc = makeWordWithOddParity(encodeTC(0o54));
+    const tcDec = decodeBlock2Instruction(tc, state);
+    expect(tcDec.address).toBe(0o54);
 
-  it('decodes JN (0x7010)', () => {
-    const d = decodeInstruction(0x7010);
-    expect(d.opcode).toBe(0x07);
-    expect(d.mnemonic).toBe('JN');
-    expect(d.operand).toBe(0x010);
-  });
+    const ndx = makeWordWithOddParity(encodeNDX(0o34));
+    const ndxDec = decodeBlock2Instruction(ndx, state);
+    expect(ndxDec.address).toBe(0o34);
 
-  it('decodes IN (0x8001)', () => {
-    const d = decodeInstruction(0x8001);
-    expect(d.opcode).toBe(0x08);
-    expect(d.mnemonic).toBe('IN');
-    expect(d.operand).toBe(0x001);
-  });
-
-  it('decodes OUT (0x9001)', () => {
-    const d = decodeInstruction(0x9001);
-    expect(d.opcode).toBe(0x09);
-    expect(d.mnemonic).toBe('OUT');
-    expect(d.operand).toBe(0x001);
-  });
-
-  it('decodes HALT (0xA000)', () => {
-    const d = decodeInstruction(0xA000);
-    expect(d.opcode).toBe(0x0A);
-    expect(d.mnemonic).toBe('HALT');
-    expect(d.operand).toBe(0x000);
-  });
-
-  it('handles max operand (0xFFF)', () => {
-    const d = decodeInstruction(0x1FFF);
-    expect(d.opcode).toBe(0x01);
-    expect(d.operand).toBe(0xFFF);
-  });
-
-  it('handles unknown opcode gracefully', () => {
-    const d = decodeInstruction(0xF000);
-    expect(d.opcode).toBe(0x0F);
-    expect(d.mnemonic).toBe('???');
-    expect(d.operand).toBe(0x000);
+    const read = makeWordWithOddParity(encodeREAD(0o77));
+    const readDec = decodeBlock2Instruction(read, state);
+    expect(readDec.channel).toBe(0o77);
   });
 });

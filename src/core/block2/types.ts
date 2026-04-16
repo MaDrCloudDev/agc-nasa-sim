@@ -14,9 +14,11 @@ export interface Block2DecodedInstruction {
 
 export interface Block2TraceEntry {
   cycle: number;
+  address: number;
   z: number;
   raw: AgcWord16;
   mnemonic: string;
+  operand?: number;
   result: string;
 }
 

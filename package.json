@@ -1,5 +1,5 @@
 {
-  "name": "apollo-js",
+  "name": "agc-nasa-sim",
   "version": "0.1.0",
   "description": "Browser-based Apollo Guidance Computer emulator",
   "type": "module",

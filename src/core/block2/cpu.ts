@@ -74,6 +74,7 @@ export class AgcBlock2Cpu {
   step(): void {
     if (this.halted) return;
 
+    const address = this.z;
     let raw = this.memory.read(this.z, this.fb) as AgcWord16;
     if (this._nextPatchedInstruction && this._nextPatchedInstruction.addr === this.z) {
       raw = makeWordWithOddParity(this._nextPatchedInstruction.data15) as AgcWord16;
@@ -91,9 +92,11 @@ export class AgcBlock2Cpu {
 
     this.trace.push({
       cycle: this.cycleCount,
+      address,
       z: this.z,
       raw,
       mnemonic: decoded.mnemonic,
+      operand: decoded.address ?? decoded.channel ?? decoded.operand6,
       result,
     });
     if (this.trace.length > MAX_TRACE_ENTRIES) this.trace.shift();
@@ -154,4 +157,3 @@ export class AgcBlock2Cpu {
     this.io.write(ch, value);
   }
 }
-

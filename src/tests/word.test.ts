@@ -12,7 +12,7 @@ import {
   subOnesComplement15,
   toOctal5,
   toSignedIntFromData15,
-} from '../../core/block2/word.js';
+} from '../core/block2/word.js';
 
 describe('block2/word', () => {
   it('mask15 keeps only 15 bits', () => {
